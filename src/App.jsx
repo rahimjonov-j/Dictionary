@@ -128,7 +128,7 @@ const fetchWord = async (word) => {
           {/* CONTENT */}
           {!loading && !error && data && (
             <div className="pt-12 pb-10">
-
+{/* audio word */}
               <div className="flex justify-between">
                 <div className="font-bold text-[44px] dark:text-white">
                   {data.word}
@@ -152,15 +152,19 @@ const fetchWord = async (word) => {
               <div className="pt-6">
                 {data.meanings?.map((data, i) => (
                   <div key={i} className="pt-6">
+                   
                     <div className="flex gap-4 items-center">
                       <i className="font-bold dark:text-white">
                         {data.partOfSpeech}
                       </i>
                       <div className="h-0.5 w-full bg-[#E9E9E9] dark:bg-[#3A3A3A]" />
                     </div>
-
-                    {data.definitions?.map((d, j) => (
-                      <div key={j} className="flex gap-4 mt-4">
+                      <div className="pt-[18px]">
+                      <span className="text-[#757575] text-[18px]">Meaning</span>
+                    </div>
+                    {data.definitions?.map((d, ind) => (
+                    <div key={ind} className="pl-5">
+                       <div  className="flex gap-4 mt-4">
                        <div>
                          <div className="w-3 h-3 rounded-full bg-[#8F19E8] mt-2" />
                        </div>
@@ -170,7 +174,11 @@ const fetchWord = async (word) => {
                         </span>
                      </div>
                       </div>
+                   
+                 </div>
+        
                     ))}
+                    
                   </div>
                 ))}
               </div>
