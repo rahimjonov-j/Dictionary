@@ -30,9 +30,9 @@ export default function Navbar({setFont}) {
       <SelectContent  >
         <SelectGroup >
           <SelectLabel>Select font</SelectLabel>
-          <SelectItem value="font-sans">Sans Serif</SelectItem>
-          <SelectItem value="font-serif">Serif</SelectItem>
-          <SelectItem value="font-mono">Mono</SelectItem>
+          <SelectItem value="font-sans" className='font-sans'>Sans Serif</SelectItem>
+          <SelectItem value="font-serif" className='font-serif'>Serif</SelectItem>
+          <SelectItem value="font-mono" className='font-mono'>Mono</SelectItem>
        
         </SelectGroup>
       </SelectContent>

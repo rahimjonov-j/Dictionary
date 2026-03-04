@@ -148,40 +148,50 @@ const fetchWord = async (word) => {
               <div className="text-purple-600 text-[18px]">
                 {data.phonetics?.[0]?.text}
               </div>
+              {/* meanings synonyms */}
+<div className="pt-6">
+  {data.meanings?.map((meaning, i) => (
+    <div key={i} className="pt-6">
 
-              <div className="pt-6">
-                {data.meanings?.map((data, i) => (
-                  <div key={i} className="pt-6">
-                   
-                    <div className="flex gap-4 items-center">
-                      <i className="font-bold dark:text-white">
-                        {data.partOfSpeech}
-                      </i>
-                      <div className="h-0.5 w-full bg-[#E9E9E9] dark:bg-[#3A3A3A]" />
-                    </div>
-                      <div className="pt-[18px]">
-                      <span className="text-[#757575] text-[18px]">Meaning</span>
-                    </div>
-                    {data.definitions?.map((d, ind) => (
-                    <div key={ind} className="pl-5">
-                       <div  className="flex gap-4 mt-4">
-                       <div>
-                         <div className="w-3 h-3 rounded-full bg-[#8F19E8] mt-2" />
-                       </div>
-                     <div>
-                         <span className="dark:text-white">
-                          {d.definition}
-                        </span>
-                     </div>
-                      </div>
-                   
-                 </div>
-        
-                    ))}
-                    
-                  </div>
-                ))}
-              </div>
+      <div className="flex gap-4 items-center">
+        <i className="font-bold dark:text-white">
+          {meaning.partOfSpeech}
+        </i>
+        <div className="h-0.5 w-full bg-[#E9E9E9] dark:bg-[#3A3A3A]" />
+      </div>
+
+      <div className="pt-[18px]">
+        <span className="text-[#757575] text-[18px]">
+          Meaning
+        </span>
+      </div>
+
+      {meaning.definitions?.map((d, ind) => (
+        <div key={ind} className="pl-5">
+          <div className="flex gap-4 mt-4">
+            <div className="w-3 h-3 rounded-full bg-[#8F19E8] mt-2" />
+            <span className="dark:text-white">
+              {d.definition}
+            </span>
+          </div>
+        </div>
+      ))}
+
+      {/*  synonyms */}
+      {meaning.synonyms && meaning.synonyms.length > 0 && (
+        <div className="flex gap-4 pt-6 pl-0">
+          <span className="text-[#757575] text-[18px]">
+            Synonyms
+          </span>
+          <span className="text-[#A445ED] font-semibold">
+            {meaning.synonyms.join(", ")}
+          </span>
+        </div>
+      )}
+
+    </div>
+  ))}
+</div>
 
               {data.sourceUrls && (
                 <div className="pt-10">
