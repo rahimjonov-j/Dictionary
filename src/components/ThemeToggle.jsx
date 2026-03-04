@@ -1,11 +1,14 @@
 // ThemeToggle.jsx
+import { Moon } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 
 export default function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <button
+  <>
+<div className="flex items-center gap-3">
+      <button
       onClick={toggleTheme}
       className={`
         relative w-12 h-6 rounded-full transition-colors
@@ -22,6 +25,12 @@ export default function ThemeToggle() {
       <span className="absolute right-1 top-1 text-sm">
         {theme === "dark" }
       </span>
+      
     </button>
+  <div className="text-gray-500 dark:text-[#A445ED] cursor-pointer" onClick={toggleTheme}>
+      <Moon/>
+  </div>
+</div>
+  </>
   );
 }

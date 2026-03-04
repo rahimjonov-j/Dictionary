@@ -76,10 +76,10 @@ const fetchWord = async (word) => {
 
   return (
     <ThemeProvider>
-      <div className={font}>
+      <div className={font} >
         <Navbar setFont={setFont}/>
 
-        <div className="flex flex-col mx-auto mt-12 w-[350px] sm:w-[660px] md:w-[740px]">
+        <div className="flex flex-col mx-auto mt-12 overflow-hidden w-[330px] sm:w-[560px] md:w-[740px]">
 
        
 
@@ -127,8 +127,8 @@ const fetchWord = async (word) => {
 
           {/* CONTENT */}
           {!loading && !error && data && (
-            <div className="pt-12 pb-10">
-{/* audio word */}
+            <div className="pt-12 pb-10 ">
+          {/* audio word */}
               <div className="flex justify-between">
                 <div className="font-bold text-[44px] dark:text-white">
                   {data.word}
@@ -169,10 +169,14 @@ const fetchWord = async (word) => {
       {meaning.definitions?.map((d, ind) => (
         <div key={ind} className="pl-5">
           <div className="flex gap-4 mt-4">
-            <div className="w-3 h-3 rounded-full bg-[#8F19E8] mt-2" />
-            <span className="dark:text-white">
+          <div>
+              <div className="w-3 h-3 rounded-full bg-[#8F19E8] mt-2" />
+          </div>
+         <div>
+             <span className="dark:text-white">
               {d.definition}
             </span>
+         </div>
           </div>
         </div>
       ))}

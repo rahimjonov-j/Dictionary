@@ -16,7 +16,7 @@ export default function Navbar({setFont}) {
     
   return (
     <div className="mt-[58px]">
-        <nav className="flex justify-between mx-auto w-[350px] sm:w-[600px] md:w-[740px]">
+        <nav className="flex justify-between overflow-x-hidden mx-auto w-[330px] sm:w-[560px] md:w-[740px]">
             {/* logo */}
             <div>
                 <img src="./iconoir_book.svg" alt="nav logo" />
@@ -44,12 +44,12 @@ export default function Navbar({setFont}) {
   <div className="h-6 w-px bg-gray-300 dark:bg-gray-600" />
 
 
-  <div className="flex items-center gap-5 px-2">
-  <div>
+  <div >
+
       <ThemeToggle />
   </div>
-<div className="text-gray-500 dark:text-[#A445ED]">   <Moon /></div>
-  </div>
+
+
 
             </div>
           
