@@ -79,7 +79,7 @@ const fetchWord = async (word) => {
       <div className={font} >
         <Navbar setFont={setFont}/>
 
-        <div className="flex flex-col mx-auto mt-12 overflow-hidden w-[330px] sm:w-[560px] md:w-[740px]">
+        <div className="flex flex-col mx-auto mt-12 overflow-x-hidden w-[330px] sm:w-[560px] md:w-[740px]">
 
        
 
@@ -96,7 +96,7 @@ const fetchWord = async (word) => {
               onChange={(e) => setSearch(e.target.value)}
               type="text"
               placeholder="Write your word..."
-              className="w-full h-11 rounded-xl bg-gray-100 dark:bg-[#1F1F1F] pl-4 pr-10 text-sm outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-[325px] h-11 mt-1 mr-1 ml-1 rounded-xl bg-gray-100 dark:bg-[#1F1F1F] pl-4 pr-10 text-sm outline-none focus:ring-1 focus:ring-purple-500 sm:w-[554px] md:w-[735px]"
             />
 
             <Search
