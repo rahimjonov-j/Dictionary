@@ -1,88 +1,85 @@
 import { useEffect, useRef, useState } from "react";
 import { ThemeProvider } from "./components/ThemeProvider";
 import Navbar from "./ComponentsPage/Navbar";
-import { ExternalLink, Play, Search } from "lucide-react";
+import { ExternalLink, Pause, Play, Search } from "lucide-react";
 
 function App() {
   const [search, setSearch] = useState("");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-   const [font, setFont] = useState("font-sans");
-
+  const [inputError, setInputError] = useState(false);
+  const [font, setFont] = useState("font-sans");
+  const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
 
+  // WORD FETCH FUNCTION
+  const fetchWord = async (word) => {
+    if (!word) return;
+
+    try {
+      setLoading(true);
+      setError(false);
+      setData(null);
+
+      const res = await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+      );
+
+      if (!res.ok) throw new Error();
+
+      const result = await res.json();
+      setData(result[0]);
+
+      localStorage.setItem("lastWord", word);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Form FUNCTION
   const MyWords = async () => {
-  if (!search.trim()) return;
+    if (!search.trim()) {
+      setInputError(true);
+      return;
+    }
 
-  try {
-    setLoading(true);
-    setError(false);
-    setData(null);
+    setInputError(false);
+    fetchWord(search);
+  };
 
-    const res = await fetch(
-      `https://api.dictionaryapi.dev/api/v2/entries/en/${search}`
-    );
+  // Load last word
+  useEffect(() => {
+    const savedWord = localStorage.getItem("lastWord");
+    if (savedWord) {
+      setSearch(savedWord);
+      fetchWord(savedWord);
+    }
+  }, []);
 
-    if (!res.ok) throw new Error();
+  // audio toggle
+  const handleAudio = () => {
+    if (!audioRef.current) return;
 
-    const result = await res.json();
-    setData(result[0]);
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  };
 
-   
-    localStorage.setItem("lastWord", search);
-
-  } catch {
-    setError(true);
-  } finally {
-    setLoading(false);
-  }
-};
-
-// take last word that was search
-useEffect(() => {
-  const savedWord = localStorage.getItem("lastWord");
-  if (savedWord) {
-    setSearch(savedWord);
- 
-    fetchWord(savedWord);
-  }
-}, []);
-
-
-const fetchWord = async (word) => {
-  if (!word) return;
-  try {
-    setLoading(true);
-    setError(false);
-    setData(null);
-
-    const res = await fetch(
-      `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
-    );
-
-    if (!res.ok) throw new Error();
-
-    const result = await res.json();
-    setData(result[0]);
-  } catch {
-    setError(true);
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const audioUrl = data?.phonetics?.find(p => p.audio)?.audio;
+  const audioUrl = data?.phonetics?.find((p) => p.audio)?.audio;
 
   return (
     <ThemeProvider>
-      <div className={font} >
-        <Navbar setFont={setFont}/>
+      <div className={font}>
+        <Navbar setFont={setFont} />
 
         <div className="flex flex-col mx-auto mt-12 overflow-x-hidden w-[330px] sm:w-[560px] md:w-[740px]">
-
-       
-
           {/* FORM */}
           <form
             onSubmit={(e) => {
@@ -93,10 +90,18 @@ const fetchWord = async (word) => {
           >
             <input
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                if (e.target.value.trim()) setInputError(false);
+              }}
               type="text"
               placeholder="Write your word..."
-              className="w-[325px] h-11 mt-1 mr-1 ml-1 rounded-xl bg-gray-100 dark:bg-[#1F1F1F] pl-4 pr-10 text-sm outline-none focus:ring-1 focus:ring-purple-500 sm:w-[554px] md:w-[735px]"
+              className={`w-[325px] h-11 mt-1 mr-1 ml-1 rounded-xl bg-gray-100 dark:bg-[#1F1F1F] pl-4 pr-10 text-sm outline-none sm:w-[554px] md:w-[735px]
+              ${
+                inputError
+                  ? "border border-red-500 focus:ring-1 focus:ring-red-500"
+                  : "focus:ring-1 focus:ring-purple-500"
+              }`}
             />
 
             <Search
@@ -106,29 +111,38 @@ const fetchWord = async (word) => {
             />
           </form>
 
-          {/* LOADER */}
+          {/* Validation */}
+          {inputError && (
+            <p className="text-red-500 text-sm mt-1 ml-2">
+              Whoops, can’t be empty...
+            </p>
+          )}
+
+          {/* loader */}
           {loading && (
             <div className="flex justify-center mt-12">
               <div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
           )}
 
-          {/* ERROR */}
+          {/* errror */}
           {error && !loading && (
             <div className="flex justify-center flex-col gap-5 items-center mt-20">
-         <img src="./emoji.png" alt="" />
-         <h4 className="font-bold">No Definitions Found</h4>
-         <div className="flex flex-col items-center gap-0.5 text-[#757575]">
-           <p>Sorry pal, we couldn't find definitions for the word you were looking for. You can try  </p> <span>the search again at later time or head to the web instead.</span>
-          
-         </div>
-          </div>
+              <img src="./emoji.png" alt="" />
+              <h4 className="font-bold">No Definitions Found</h4>
+              <div className="flex flex-col items-center gap-0.5 text-[#757575]">
+                <p>
+                  Sorry pal, we couldn't find definitions for the word you were
+                  looking for.
+                </p>
+              </div>
+            </div>
           )}
 
-          {/* CONTENT */}
+          {/* main */}
           {!loading && !error && data && (
-            <div className="pt-12 pb-10 ">
-          {/* audio word */}
+            <div className="pt-12 pb-10">
+              {/* WORD + AUDIO */}
               <div className="flex justify-between">
                 <div className="font-bold text-[44px] dark:text-white">
                   {data.word}
@@ -136,11 +150,23 @@ const fetchWord = async (word) => {
 
                 {audioUrl && (
                   <div
-                    onClick={() => audioRef.current?.play()}
-                    className="rounded-full bg-[#A445ED]/50 p-5 cursor-pointer"
+                   
                   >
-                    <Play size={24} className="text-[#A445ED]" />
-                    <audio ref={audioRef} src={audioUrl} />
+                    <div
+                      onClick={handleAudio}
+                      className="rounded-full bg-[#A445ED]/50 p-5 cursor-pointer"
+                    >
+                      {isPlaying ? (
+                        <Pause size={24} className="text-[#A445ED]" />
+                      ) : (
+                        <Play size={24} className="text-[#A445ED]" />
+                      )}
+                    </div>
+                    <audio
+                      ref={audioRef}
+                      src={audioUrl}
+                      onEnded={() => setIsPlaying(false)}
+                    />
                   </div>
                 )}
               </div>
@@ -148,55 +174,65 @@ const fetchWord = async (word) => {
               <div className="text-purple-600 text-[18px]">
                 {data.phonetics?.[0]?.text}
               </div>
-              {/* meanings synonyms */}
-<div className="pt-6">
-  {data.meanings?.map((meaning, i) => (
-    <div key={i} className="pt-6">
 
-      <div className="flex gap-4 items-center">
-        <i className="font-bold dark:text-white">
-          {meaning.partOfSpeech}
-        </i>
-        <div className="h-0.5 w-full bg-[#E9E9E9] dark:bg-[#3A3A3A]" />
-      </div>
+              {/* meanings */}
+              <div className="pt-6">
+                {data.meanings?.map((meaning, i) => (
+                  <div key={i} className="pt-6">
+                    <div className="flex gap-4 items-center">
+                      <i className="font-bold dark:text-white">
+                        {meaning.partOfSpeech}
+                      </i>
+                      <div className="h-0.5 w-full bg-[#E9E9E9] dark:bg-[#3A3A3A]" />
+                    </div>
 
-      <div className="pt-[18px]">
-        <span className="text-[#757575] text-[18px]">
-          Meaning
-        </span>
-      </div>
+                    <div className="pt-[18px]">
+                      <span className="text-[#757575] text-[18px]">
+                        Meaning
+                      </span>
+                    </div>
 
-      {meaning.definitions?.map((d, ind) => (
-        <div key={ind} className="pl-5">
-          <div className="flex gap-4 mt-4">
-          <div>
-              <div className="w-3 h-3 rounded-full bg-[#8F19E8] mt-2" />
-          </div>
-         <div>
-             <span className="dark:text-white">
-              {d.definition}
-            </span>
-         </div>
-          </div>
-        </div>
-      ))}
+                    {meaning.definitions?.map((d, ind) => (
+                      <div key={ind} className="pl-5">
+                        <div className="flex gap-4 mt-4">
+                          <div>
+                            <div className="w-3 h-3 rounded-full bg-[#8F19E8] mt-2" />
+                          </div>
+                          <div>
+                            <span className="dark:text-white">
+                              {d.definition}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
 
-      {/*  synonyms */}
-      {meaning.synonyms && meaning.synonyms.length > 0 && (
-        <div className="flex gap-4 pt-6 pl-0">
-          <span className="text-[#757575] text-[18px]">
-            Synonyms
-          </span>
-          <span className="text-[#A445ED] font-semibold">
-            {meaning.synonyms.join(", ")}
-          </span>
-        </div>
-      )}
+                    {/* synonyms */}
+                    {meaning.synonyms && meaning.synonyms.length > 0 && (
+                      <div className="flex gap-4 pt-6 flex-wrap">
+                        <span className="text-[#757575] text-[18px]">
+                          Synonyms
+                        </span>
 
-    </div>
-  ))}
-</div>
+                        {meaning.synonyms.map((el, index) => (
+                          <span
+                            key={index}
+                            onClick={() => {
+                              setSearch(el);
+                              fetchWord(el);
+                            }}
+                            className="text-[#A445ED] font-semibold cursor-pointer"
+                          >
+                            {el}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
 
+              {/* url */}
               {data.sourceUrls && (
                 <div className="pt-10">
                   <div className="h-0.5 w-full bg-[#E9E9E9] dark:bg-[#3A3A3A]" />
@@ -205,6 +241,7 @@ const fetchWord = async (word) => {
                     <a
                       href={data.sourceUrls[0]}
                       target="_blank"
+                      rel="noreferrer"
                       className="flex items-center gap-2 hover:text-blue-600"
                     >
                       {data.sourceUrls[0]}
