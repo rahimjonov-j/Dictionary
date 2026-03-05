@@ -130,11 +130,19 @@ function App() {
             <div className="flex justify-center flex-col gap-5 items-center mt-20">
               <img src="./emoji.png" alt="" />
               <h4 className="font-bold">No Definitions Found</h4>
-              <div className="flex flex-col items-center gap-0.5 text-[#757575]">
+              <div className="flex items-center flex-col gap-0.5 text-[#757575] md:hidden">
+                <p>Sorry  we couldn't find definitions</p>
+                <p>You can search again. </p>
+
+              </div>
+              <div className=" hidden flex-col items-center  gap-0.5 text-[#757575] md:flex">
+             
                 <p>
                   Sorry pal, we couldn't find definitions for the word you were
-                  looking for.
+                  looking for. 
                 </p>
+                <p className="flex items-center"> You can try the search again at later time or
+                  head to the web instead.</p>
               </div>
             </div>
           )}
@@ -149,9 +157,7 @@ function App() {
                 </div>
 
                 {audioUrl && (
-                  <div
-                   
-                  >
+                  <div>
                     <div
                       onClick={handleAudio}
                       className="rounded-full bg-[#A445ED]/50 p-5 cursor-pointer"
